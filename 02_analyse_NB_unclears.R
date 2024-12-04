@@ -35,7 +35,7 @@ visualize_top_features <- function( nb_model, outdir )
 {
     ##visualiseren features##
     # Visualiseer de top 30 positieve features
-    top_features <- sort( nb_model$param["epilepsy", ] / colSums( nb_model$param ), decreasing = TRUE)[1:30]
+    top_features <- sort( nb_model$param[ "Epilepsy", ] / colSums( nb_model$param ), decreasing = TRUE)[1:30]
     
     # Zet dit om in een data.frame
     top_features_df <- data.frame( Feature = names(top_features), Importance = top_features )
@@ -53,7 +53,7 @@ visualize_top_features <- function( nb_model, outdir )
         scale_fill_manual(values = rep("darkslategray3", 30))
     
     # Visualiseer de top 30 negatieve features
-    top_negative_features <- sort(nb_model$param["no epilepsy", ] / colSums(nb_model$param), decreasing = TRUE)[1:30]
+    top_negative_features <- sort(nb_model$param[ "Control", ] / colSums(nb_model$param), decreasing = TRUE)[1:30]
     
     # Zet dit om in een data.frame
     top_negative_features_df <- data.frame( Feature = names(top_negative_features), Importance = top_negative_features )
@@ -79,11 +79,11 @@ visualize_top_features <- function( nb_model, outdir )
 get_performance_mtx <- function( mtx )
 {
     # get cells
-    TP <- mtx[ 'epilepsy', 'epilepsy' ]
-    TN <- mtx[ 'no epilepsy', 'no epilepsy' ]
+    TP <- mtx[ 'Epilepsy', 'Epilepsy' ]
+    TN <- mtx[ 'Control', 'Control' ]
     
-    FP <- mtx[ 'epilepsy', 'no epilepsy' ]
-    FN <- mtx[ 'no epilepsy', 'epilepsy' ]
+    FP <- mtx[ 'Epilepsy', 'Control' ]
+    FN <- mtx[ 'Control', 'Epilepsy' ]
     
     # Total
     N <- TP + TN + FP + FN
@@ -285,7 +285,7 @@ tab_class_train <- table( actual_class_train, predicted_class_train )
 print( tab_class_train )
     
 #confusion matrix
-confusion_mat_train <- caret::confusionMatrix( tab_class_train, mode = "everything", positive = "epilepsy" )
+confusion_mat_train <- caret::confusionMatrix( tab_class_train, mode = "everything", positive = "Epilepsy" )
 print( confusion_mat_train )
 
 # visualize in plots
@@ -338,7 +338,7 @@ tab_class_unclear <- table( actual_class_unclear, predicted_class_unclear )
 print( tab_class_unclear )
 
 # confusion matrix
-confusion_mat_unclear <- caret::confusionMatrix( tab_class_unclear, mode = "everything", positive = "epilepsy" )
+confusion_mat_unclear <- caret::confusionMatrix( tab_class_unclear, mode = "everything", positive = "Epilepsy" )
 print( confusion_mat_unclear )
 
 # get performance in standardized format

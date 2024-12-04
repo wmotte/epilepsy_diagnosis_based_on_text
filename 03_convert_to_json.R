@@ -23,9 +23,8 @@ get_selected_data <- function( raw )
     
     # final diagnosis (after follow-up)
     output <- as.factor( df$fu_diagnosis_after_FU )
-    #levels( output ) <- c( 'Epilepsy', 'No_epilepsy' )
-    levels( output ) <- c( '1', '0' )
-        
+    levels( output ) <- c( 'Epilepsy', 'Control' )
+
     # construct df
     export_data <- data.frame( id = 1:length( patient_id ),
                                patient_id = patient_id,
@@ -47,7 +46,7 @@ dir.create( outdir, showWarnings = FALSE )
 
 
 # get train/test data similar to Naive Bayes model [80%/20%]
-raw_train <- as.data.frame( readr::read_tsv( 'out.00.analyse.1A/df_train.tsv', show_col_types = FALSE ) ) # [1179]
+raw_train <- as.data.frame( readr::read_tsv( 'out.00.analyse.1A/df_train.tsv', show_col_types = FALSE ) ) # [1173]
 raw_eval <- as.data.frame( readr::read_tsv( 'out.00.analyse.1A/df_test.tsv', show_col_types = FALSE ) ) # [293]
 
 # unclears
@@ -67,5 +66,3 @@ json_unclear <- toJSON( x = df_unclear, dataframe = 'rows', pretty = TRUE )
 write( json_train, paste0( outdir, '/epilepsy_diagnosis__train_random80perc.json' ) )
 write( json_eval, paste0( outdir, '/epilepsy_diagnosis__eval_random20perc.json' ) )
 write( json_eval, paste0( outdir, '/epilepsy_diagnosis__unclears.json' ) )
-
-

@@ -54,7 +54,7 @@ dfm_train_tfidf_top8000_df <- convert( dfm_train_tfidf_top8000, to = "data.frame
 dfm_train_tfidf_top8000_df_clean <- dfm_train_tfidf_top8000_df[ , sapply(dfm_train_tfidf_top8000_df, is.numeric ) ]
   
 # Zorg ervoor dat de doelvariabele een factor is
-df_train$fu_diagnosis_after_FU <- as.factor( df_train$fu_diagnosis_after_FU ) # ! was: as.factor( df_train$group )
+df_train$fu_diagnosis_after_FU <- as.factor( df_train$fu_diagnosis_after_FU )
   
 # Stel de rfeControl in
 ctrl <- rfeControl( functions = rfFuncs, method = "cv", number = 2, verbose = TRUE )
