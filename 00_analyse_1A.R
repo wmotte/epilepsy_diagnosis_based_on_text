@@ -22,9 +22,6 @@ tmp$Participant.Id
 # keep others
 df <- raw[ !idx_problematic, ]
 
-
-
-
 # add epilepsy diagnosis group
 df$group <- NA
 df$group <- ifelse( df$fu_diagnosis_after_FU == 'epilepsy', 'yes', 
@@ -38,13 +35,33 @@ df[ df$fu_diagnosis_after_FU == 'epilepsy', 'fu_diagnosis_after_FU' ] <- 'Epilep
 df[ df$fu_diagnosis_after_FU == 'no epilepsy', 'fu_diagnosis_after_FU' ] <- 'Control'
 
 
-
-
 # split dataset based on the FU outcome (!) => 80% train, 20% test
 set.seed( 123 )
 index <- caret::createDataPartition( df$fu_diagnosis_after_FU, p = 0.8, list = FALSE )
 df_train <- df[ index, ]
 df_test <- df[ -index, ]
+
+# now the issue is that the classes are not balanced, so remove part of the training set
+# and add this to the test set.
+
+# C: 764, E: 409
+summ <- summary( as.factor( df_train$fu_diagnosis_after_FU ) )
+
+# 355
+to_remove <- summ[ 1 ] - summ[ 2 ]
+
+# get surplus 'Controls'
+set.seed( 1234 )
+indices <- which( df_train$fu_diagnosis_after_FU == 'Control' )
+indices <- sample( indices, to_remove )
+
+df_surplus <- df_train[ indices, ]
+df_train_balanced <- df_train[ -indices, ]
+
+# check
+summary( as.factor( df_train_balanced$fu_diagnosis_after_FU ) )
+
+df_train <- df_train_balanced
 
 # write train/test to disk (also for LLM processing)
 readr::write_tsv( df_train, file = paste0( outdir, '/df_train.tsv' ), quote = 'all' )
@@ -72,4 +89,28 @@ rownames( df_unclear_csv ) <- NULL
 write.csv( df_train_csv, file = paste0( outdir, '/df_train.csv' ), quote = TRUE )
 write.csv( df_test_csv, file = paste0( outdir, '/df_test.csv' ), quote = TRUE )
 write.csv( df_unclear_csv, file = paste0( outdir, '/df_unclear.csv' ), quote = TRUE )
+
+# C: 409, E: 409
+summary( as.factor( df_train_csv$status ) )
+
+# C: 191, E: 102
+summary( as.factor( df_test_csv$status ) )
+
+# C: 219, E: 97
+summary( as.factor( df_unclear_csv$status ) )
+
+
+# make small set n = 50
+set.seed( 7 )
+idx <- sample( 1:nrow( df_test_csv ) )[ 1:50 ]
+df_small_csv <- df_test_csv[ idx, ]
+
+# C: 35, E: 15
+summary( as.factor( df_small_csv$status ) )
+
+# save to disk
+write.csv( df_small_csv, file = paste0( outdir, '/df_small.csv' ), quote = TRUE )
+
+
+
 
