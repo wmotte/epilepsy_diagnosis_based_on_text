@@ -27,7 +27,7 @@ mcnemar <- function( gold, pred_A, pred_B )
     # The McNemar test statistic is calculated using only the discordant pairs (tab[1,2] vs tab[2,1]).
     tt <- mcnemar.test( tab )
     
-    return( data.frame( statistic = tt$statistic, pvalue = round( tt$p.value, 3 ) ) )
+    return( data.frame( chi_squared = round( tt$statistic, 2 ), df = tt$parameter, pvalue = round( tt$p.value, 3 ) ) )
     
 }
 
@@ -48,3 +48,10 @@ df_goldstandard_unclear <- readr::read_tsv( 'out.02.analyse.NB.unclears//gold_st
 # paired mc-nemar tests
 mcnemar( df_goldstandard_test$true_class, df_nb_test$predicted_class, df_bert_test$predicted_class )            # p = 0.804
 mcnemar( df_goldstandard_unclear$true_class, df_nb_unclear$predicted_class, df_bert_unclear$predicted_class )   # p = 0.461
+
+
+#                       chi_squared df pvalue
+# McNemar's chi-squared        0.06  1  0.804
+
+#                      chi_squared df pvalue
+#McNemar's chi-squared        0.54  1  0.461
